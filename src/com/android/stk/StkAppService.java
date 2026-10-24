@@ -2213,43 +2213,19 @@ public class StkAppService extends Service implements Runnable {
     private void handlePlayTone(int slotId) {
         TextMessage toneMsg = mStkContext[slotId].mCurrentCmd.geTextMessage();
 
-        boolean showUser = true;
-        boolean displayDialog = true;
-        Resources resource = Resources.getSystem();
-        try {
-            displayDialog = !resource.getBoolean(
-                    R.bool.config_stkNoAlphaUsrCnf);
-        } catch (NotFoundException e) {
-            displayDialog = true;
+        // IchthysOS: the tone always plays in the background, never behind a modal ToneDialog.
+        // Upstream read the app's config_stkNoAlphaUsrCnf through Resources.getSystem(), which
+        // can't resolve an app resource, so every PLAY_TONE without an alpha identifier (Mobile-ID
+        // sends those) opened a "Playing Tone" dialog that could outlive the SIM session. The
+        // terminal response is still sent when the tone's duration ends (OP_STOP_TONE). Text the
+        // SIM supplies itself (3GPP TS 11.14, 6.4.5: the UE may show it) becomes a short toast.
+        boolean simText = toneMsg != null && toneMsg.text != null && !toneMsg.text.isEmpty()
+                && !(toneMsg.iconSelfExplanatory && toneMsg.icon != null);
+        CatLog.d(LOG_TAG, "PLAY_TONE in background, SIM text: " + simText);
+        playTone(false, slotId);
+        if (simText) {
+            Toast.makeText(sInstance, toneMsg.text, Toast.LENGTH_SHORT).show();
         }
-
-        // As per the spec 3GPP TS 11.14, 6.4.5. Play Tone.
-        // If there is no alpha identifier tlv present, UE may show the
-        // user information. 'config_stkNoAlphaUsrCnf' value will decide
-        // whether to show it or not.
-        // If alpha identifier tlv is present and its data is null, play only tone
-        // without showing user any information.
-        // Alpha Id is Present, but the text data is null.
-        if ((toneMsg.text != null ) && (toneMsg.text.equals(""))) {
-            CatLog.d(LOG_TAG, "Alpha identifier data is null, play only tone");
-            showUser = false;
-        }
-        // Alpha Id is not present AND we need to show info to the user.
-        if (toneMsg.text == null && displayDialog) {
-            CatLog.d(LOG_TAG, "toneMsg.text " + toneMsg.text
-                    + " Starting ToneDialog activity with default message.");
-            toneMsg.text = getResources().getString(R.string.default_tone_dialog_msg);
-            showUser = true;
-        }
-        // Dont show user info, if config setting is true.
-        if (toneMsg.text == null && !displayDialog) {
-            CatLog.d(LOG_TAG, "config value stkNoAlphaUsrCnf is true");
-            showUser = false;
-        }
-
-        CatLog.d(LOG_TAG, "toneMsg.text: " + toneMsg.text + "showUser: " +showUser +
-                "displayDialog: " +displayDialog);
-        playTone(showUser, slotId);
     }
 
     private void playTone(boolean showUserInfo, int slotId) {
@@ -2341,7 +2317,7 @@ public class StkAppService extends Service implements Runnable {
             msg.text = getResources().getString(R.string.default_open_channel_msg);
         }
 
-        mAlertDialog = new AlertDialog.Builder(mContext)
+        mAlertDialog = new AlertDialog.Builder(mContext, R.style.Theme_Stk_Dialog_Alert)
                     .setIconAttribute(android.R.attr.alertDialogIcon)
                     .setTitle(msg.title)
                     .setMessage(msg.text)
@@ -2384,7 +2360,7 @@ public class StkAppService extends Service implements Runnable {
 
         msg.title = getResources().getString(R.string.stk_dialog_title);
 
-        final AlertDialog dialog = new AlertDialog.Builder(mContext)
+        final AlertDialog dialog = new AlertDialog.Builder(mContext, R.style.Theme_Stk_Dialog_Alert)
                     .setIconAttribute(android.R.attr.alertDialogIcon)
                     .setTitle(msg.title)
                     .setMessage(msg.text)

@@ -23,5 +23,55 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <!-- IchthysOS Shoal: the dialogs these activities show (DISPLAY TEXT, confirmations). -->
+        <item name="android:alertDialogTheme">@style/Theme.Stk.Dialog.Alert</item>
+    </style>
+
+    <!-- IchthysOS Shoal: SIM Toolkit dialogs (Mobile-ID prompts, DISPLAY TEXT, confirmations, open
+         channel) read the theme engine's tokens, like the SystemUI dialogs: the dialog surface with
+         the hairline edge, accent buttons with the theme's button radius, body text in the text
+         face. The unsuffixed ichthys_* tokens follow night mode. -->
+    <style name="Theme.Stk.Dialog.Alert" parent="@*android:style/Theme.DeviceDefault.Dialog.Alert.DayNight">
+        <item name="android:windowBackground">@drawable/ichthys_dialog_background</item>
+        <item name="android:colorBackground">@*android:color/ichthys_card</item>
+        <item name="android:colorPrimary">@*android:color/ichthys_accent</item>
+        <item name="android:colorAccent">@*android:color/ichthys_accent</item>
+        <item name="android:textColorPrimary">@*android:color/ichthys_text</item>
+        <item name="android:textColorSecondary">@*android:color/ichthys_body</item>
+        <item name="android:textColorAlertDialogListItem">@*android:color/ichthys_text</item>
+        <item name="android:fontFamily">@*android:string/config_bodyFontFamily</item>
+        <item name="android:buttonCornerRadius">@*android:dimen/config_buttonCornerRadius</item>
+        <item name="android:buttonBarButtonStyle">@style/Widget.Stk.Dialog.Button</item>
+    </style>
+
+    <style name="Widget.Stk.Dialog.Button"
+        parent="@android:style/Widget.DeviceDefault.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@*android:color/ichthys_accent</item>
+        <item name="android:fontFamily">@*android:string/config_bodyFontFamilyMedium</item>
+    </style>
+
+    <!-- IchthysOS Shoal: GET INPUT (the Mobile-ID PIN screen) on the ink ground, accent controls. -->
+    <style name="Theme.Stk.Input" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@*android:color/ichthys_ink</item>
+        <item name="android:colorBackground">@*android:color/ichthys_ink</item>
+        <item name="colorPrimary">@*android:color/ichthys_accent</item>
+        <item name="colorPrimaryDark">@*android:color/ichthys_ink</item>
+        <item name="colorAccent">@*android:color/ichthys_accent</item>
+        <item name="colorControlNormal">@*android:color/ichthys_outline</item>
+        <item name="colorControlActivated">@*android:color/ichthys_accent</item>
+        <item name="android:textColorPrimary">@*android:color/ichthys_text</item>
+        <item name="android:textColorSecondary">@*android:color/ichthys_muted</item>
+        <item name="android:fontFamily">@*android:string/config_bodyFontFamily</item>
+    </style>
+
+    <!-- IchthysOS Shoal: the SIM menu. -->
+    <style name="Theme.Stk.Menu" parent="@android:style/Theme.DeviceDefault.DayNight">
+        <item name="android:windowBackground">@*android:color/ichthys_ink</item>
+        <item name="android:colorBackground">@*android:color/ichthys_ink</item>
+        <item name="android:colorAccent">@*android:color/ichthys_accent</item>
+        <item name="android:textColorPrimary">@*android:color/ichthys_text</item>
+        <item name="android:textColorSecondary">@*android:color/ichthys_muted</item>
+        <item name="android:fontFamily">@*android:string/config_bodyFontFamily</item>
+        <item name="android:alertDialogTheme">@style/Theme.Stk.Dialog.Alert</item>
     </style>
 </resources>
