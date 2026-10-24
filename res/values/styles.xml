@@ -45,7 +45,7 @@
     </style>
 
     <style name="Widget.Stk.Dialog.Button"
-        parent="@android:style/Widget.DeviceDefault.Button.ButtonBar.AlertDialog">
+        parent="@*android:style/Widget.DeviceDefault.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@*android:color/ichthys_accent</item>
         <item name="android:fontFamily">@*android:string/config_bodyFontFamilyMedium</item>
     </style>
